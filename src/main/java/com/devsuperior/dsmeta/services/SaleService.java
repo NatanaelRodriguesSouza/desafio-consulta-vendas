@@ -6,7 +6,9 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import com.devsuperior.dsmeta.dto.SaleWithSellerMinDto;
+import com.devsuperior.dsmeta.dto.SellerWithSaleDto;
 import com.devsuperior.dsmeta.projections.SaleWithSallerProjections;
+import com.devsuperior.dsmeta.projections.SellerWithSaleProjections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +38,16 @@ public class SaleService {
 		LocalDate max = (maxDate == null || maxDate.isEmpty()) ? today : LocalDate.parse(maxDate);
 		Page<SaleWithSallerProjections> result1 = repository.findSaleWithSaller(min,max,name,pageable);
 		Page<SaleWithSellerMinDto> list = result1.map(x->new SaleWithSellerMinDto(x));
+		return list;
+	}
+
+	public Page<SellerWithSaleDto> findSellerWithSale(String minDate, String maxDate,Pageable pageable){
+		LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		LocalDate result = today.minusYears(1L);
+		LocalDate min = (minDate == null || minDate.isEmpty()) ? result : LocalDate.parse(minDate);
+		LocalDate max = (maxDate == null || maxDate.isEmpty()) ? today : LocalDate.parse(maxDate);
+		Page<SellerWithSaleProjections> result1 = repository.findSellerWithSale(min,max,pageable);
+		Page<SellerWithSaleDto> list = result1.map(x->new SellerWithSaleDto(x));
 		return list;
 	}
 }
